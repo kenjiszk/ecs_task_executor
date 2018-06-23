@@ -77,7 +77,11 @@ func main() {
 			parseDescribeTaskErr(err)
 			os.Exit(1)
 		}
-		checkStatus(describeResult, startAt)
+		if len(describeResult.Failures) > 0 {
+			fmt.Println("Failed to get TaskDefinition: %s. Retrying...\n", opts.TaskDef)
+		} else {
+			checkStatus(describeResult, startAt)
+		}
 		time.Sleep(5 * time.Second)
 		fmt.Printf("LastStatus=%s TimeElapsed=%s\n", *describeResult.Tasks[0].LastStatus, time.Now().Sub(startAt))
 	}
