@@ -60,7 +60,8 @@ LastStatus=PENDING TimeElapsed=10.03916485s
   Reason: "CannotStartContainerError: API error (400): OCI runtime create failed: container_linux.go:296: starting container process caused \"exec: \\\"not_found_command\\\": executable file not found in $PATH\": unknown\n",
   TaskArn: "arn:aws:ecs:ap-northeast-1:00000000000:task/f8c0fe8b-2d1e-49f6-ab42-1d4d3d337c86"
 }
-exit status 1
+$ echo $?
+1
 ```
 ### Fail case. command is good, but failed.
 Sample script `run_and_fail.sh`. It will be successfully executed, but failed after 30min. 
@@ -93,5 +94,10 @@ LastStatus=RUNNING TimeElapsed=50.209708875s
   NetworkInterfaces: [],
   TaskArn: "arn:aws:ecs:ap-northeast-1:00000000:task/de79a37c-4c51-4307-826c-f6a3c7d733cb"
 }
-exit status 255
+$ echo $?
+255
+```
+## How to build for linux
+```
+make build-linux
 ```
