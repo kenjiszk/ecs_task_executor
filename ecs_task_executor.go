@@ -58,6 +58,10 @@ func main() {
 		parseRunTaskErr(err)
 		os.Exit(1)
 	}
+	if len(runResult.Failures) > 0 {
+		fmt.Println(runResult.Failures)
+		os.Exit(1)
+	}
 
 	// Define task describe input
 	taskArn := *runResult.Tasks[0].TaskArn
