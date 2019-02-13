@@ -10,9 +10,9 @@ import (
 	"github.com/fatih/structs"
 	"github.com/jessevdk/go-flags"
 	"os"
+	"reflect"
 	"strings"
 	"time"
-	"reflect"
 )
 
 type Options struct {
@@ -84,7 +84,7 @@ func main() {
 		if len(describeResult.Failures) > 0 {
 			fmt.Println("Failed to get TaskDefinition: %s. Retrying...\n", opts.TaskDef)
 		} else {
-			checkStatus(describeResult, startAt)
+			checkStatus(opts.Name, describeResult, startAt)
 		}
 		time.Sleep(5 * time.Second)
 		fmt.Printf("LastStatus=%s TimeElapsed=%s\n", *describeResult.Tasks[0].LastStatus, time.Now().Sub(startAt))
@@ -95,10 +95,20 @@ func main() {
 	os.Exit(1)
 }
 
-func checkStatus(t *ecs.DescribeTasksOutput, startAt time.Time) {
-	// TODO: consider multipul containers or tasks case.
+func checkStatus(name string, t *ecs.DescribeTasksOutput, startAt time.Time) {
 	task := *t.Tasks[0]
-	con := task.Containers[0]
+	con_idx := -1
+	for idx, c := range task.Containers {
+		if *c.Name == name {
+			con_idx = idx
+			break
+		}
+	}
+	if con_idx == -1 {
+		fmt.Println("There is no target container in TaskDefinition.")
+		os.Exit(1)
+	}
+	con := task.Containers[con_idx]
 	// Continue if task is not stopped
 	if *task.LastStatus != "STOPPED" {
 		return
@@ -201,4 +211,3 @@ func parseDescribeTaskErr(err error) {
 	}
 	return
 }
-
