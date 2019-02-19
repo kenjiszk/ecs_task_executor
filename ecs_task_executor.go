@@ -83,6 +83,8 @@ func main() {
 		}
 		if len(describeResult.Failures) > 0 {
 			fmt.Println("Failed to get TaskDefinition: %s. Retrying...\n", opts.TaskDef)
+			time.Sleep(5 * time.Second)
+			continue
 		} else {
 			checkStatus(opts.Name, describeResult, startAt)
 		}
